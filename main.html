@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TITRATION LAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2b33; --sub:#5b6b73; --line:#dfe6e8;
+  --bg:#ffffff; --panel:#f6f9f9; --panel2:#eef4f4;
+  --teal:#0f8f83; --teal-d:#0b6b62; --amber:#e79a3b;
+  --acid-tag:#c65b4e; --base-tag:#2f6fae;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Prompt',sans-serif;}
+body{min-height:100%;}
+.screen{display:none;max-width:980px;margin:0 auto;padding:28px 20px 60px;}
+.screen.active{display:block;}
+h1,h2,h3{margin:0 0 10px;font-weight:600;}
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;}
+.brand .flask-ico{width:30px;height:34px;background:var(--teal);clip-path:polygon(38% 0,62% 0,62% 28%,92% 96%,8% 96%);opacity:.85}
+.brand h1{font-size:26px;letter-spacing:.5px;color:var(--teal-d);}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:16px;}
+.card h2{color:var(--teal-d);font-size:19px;}
+.card p, .card li{color:var(--sub);font-size:15px;line-height:1.65;}
+.card ul{margin:8px 0 0;padding-left:20px;}
+.btn{appearance:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;border-radius:10px;padding:13px 26px;font-size:15px;transition:transform .12s ease;}
+.btn:active{transform:scale(.97);}
+.btn-main{background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(15,143,131,.28);}
+.btn-main:hover{background:var(--teal-d);}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);}
+.center{text-align:center;}
+.row-btns{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+
+/* GAME SCREEN */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.pill{background:var(--panel2);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--teal-d);font-weight:600;}
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.info-card{border-radius:14px;padding:16px 18px;font-size:14px;}
+.info-card.acid{background:#fdf3f1;border:1px solid #f2d9d4;}
+.info-card.base{background:#eff5fb;border:1px solid #d7e6f5;}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;color:#fff;margin-bottom:8px;}
+.tag.acid{background:var(--acid-tag);}
+.tag.base{background:var(--base-tag);}
+.info-card b{display:block;font-size:15.5px;margin-bottom:4px;}
+.info-card span{color:var(--sub);}
+
+/* LAB ZONE - the highlighted focus */
+.labzone{background:linear-gradient(180deg,#fbfdfd,#f1f7f7);border:1px solid #dbeceb;border-radius:22px;padding:26px 20px 22px;box-shadow:0 10px 30px rgba(15,143,131,.08), inset 0 0 0 1px #fff;position:relative;}
+.rig{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.stand{position:relative;width:6px;height:250px;background:#c9d3d5;border-radius:3px;}
+.clamp{position:absolute;left:6px;top:18px;width:34px;height:8px;background:#aeb9bc;border-radius:3px;}
+.burette{position:absolute;left:-18px;top:0;width:36px;height:150px;border:2px solid #9fb0b3;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg,#fff,#eef4f4);overflow:hidden;}
+.burette .liquid{position:absolute;bottom:0;left:0;right:0;background:var(--base-tag);transition:height .25s ease;opacity:.55;}
+.stopcock{position:absolute;left:-6px;top:150px;width:14px;height:14px;background:var(--amber);border-radius:3px;}
+.drip{position:absolute;left:-1px;top:166px;width:3px;height:22px;background:#c9d3d5;border-radius:2px;}
+.flask-wrap{margin-top:14px;position:relative;width:150px;height:150px;}
+.flask{position:absolute;inset:0;background:#fff;border:2.5px solid #b9c6c8;clip-path:polygon(40% 0,60% 0,60% 30%,94% 96%,6% 96%);overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.06);}
+.flask .liquid{position:absolute;bottom:0;left:0;right:0;height:60%;background:#f4f1e7;transition:background .05s;}
+.flask .shine{position:absolute;top:6%;left:20%;width:8%;height:70%;background:rgba(255,255,255,.55);border-radius:50%;filter:blur(2px);}
+.neck-cap{width:26px;height:10px;background:#b9c6c8;border-radius:2px 2px 0 0;margin-bottom:-2px;}
+
+.controls{margin-top:26px;max-width:480px;margin-left:auto;margin-right:auto;}
+.vol-readout{text-align:center;font-size:15px;color:var(--sub);margin-bottom:6px;}
+.vol-readout b{color:var(--ink);font-size:22px;}
+input[type=range]{width:100%;height:8px;border-radius:6px;background:#dfe9e9;appearance:none;outline:none;}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;border-radius:50%;background:var(--teal);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--teal);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;}
+.hint{text-align:center;font-size:12.5px;color:var(--sub);margin-top:8px;opacity:.8;}
+
+.result-box{margin-top:18px;text-align:center;}
+.score-num{font-size:44px;font-weight:700;color:var(--teal-d);}
+.summary-list{list-style:none;padding:0;margin:0;}
+.summary-list li{display:flex;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--sub);}
+.summary-list li b{color:var(--ink);}
+
+/* TITLE SCREEN */
+.title-screen{max-width:none;height:100vh;height:100dvh;padding:0;display:none;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#f7fbfb;}
+.title-screen.active{display:flex;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 12%,#e3f4f2 0%,#f7fbfb 55%,#ffffff 100%);}
+.hero-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.hero-rings span{position:absolute;border-radius:50%;border:1.5px solid rgba(15,143,131,.18);animation:ringPulse 6s ease-in-out infinite;}
+.hero-rings span:nth-child(1){width:320px;height:320px;}
+.hero-rings span:nth-child(2){width:480px;height:480px;animation-delay:.8s;}
+.hero-rings span:nth-child(3){width:640px;height:640px;animation-delay:1.6s;}
+@keyframes ringPulse{0%,100%{transform:scale(.96);opacity:.5;}50%{transform:scale(1.04);opacity:1;}}
+.hero-bubbles{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.hero-bubbles i{position:absolute;bottom:-40px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(15,143,131,.25));animation:bubbleUp 7s ease-in infinite;}
+@keyframes bubbleUp{0%{transform:translateY(0) scale(.6);opacity:0;}10%{opacity:.9;}90%{opacity:.5;}100%{transform:translateY(-110vh) scale(1.2);opacity:0;}}
+.hero-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px;}
+.hero-flask{position:relative;width:78px;height:96px;margin-bottom:22px;border:3px solid var(--teal-d);border-top:none;clip-path:polygon(38% 0,62% 0,62% 26%,96% 96%,4% 96%);background:rgba(255,255,255,.6);box-shadow:0 18px 40px rgba(15,143,131,.25);}
+.hero-flask-liquid{position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(180deg,#3fd6c4,#0f8f83);animation:liquidShift 3.4s ease-in-out infinite;}
+@keyframes liquidShift{0%,100%{height:50%;}50%{height:62%;}}
+.hero-flask-shine{position:absolute;top:8%;left:22%;width:8px;height:60%;background:rgba(255,255,255,.7);border-radius:50%;filter:blur(1.5px);}
+.hero-title{font-size:clamp(38px,9vw,64px);font-weight:700;letter-spacing:2px;line-height:1.05;margin:0;background:linear-gradient(100deg,#0b6b62,#0f8f83 45%,#3fd6c4 75%,#0b6b62);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite;}
+.hero-title span{display:block;font-size:.55em;letter-spacing:10px;font-weight:600;margin-top:2px;}
+@keyframes shine{to{background-position:220% center;}}
+.hero-sub{margin:14px 0 30px;color:var(--sub);font-size:15.5px;letter-spacing:.3px;}
+.hero-btn{font-size:16px;padding:15px 34px;box-shadow:0 10px 26px rgba(15,143,131,.35);}
+@media (prefers-reduced-motion:reduce){.hero-rings span,.hero-bubbles i,.hero-flask-liquid,.hero-title{animation:none;}}
+</style>
+</head>
+<body>
+
+<div id="scr-title" class="screen active title-screen">
+  <div class="hero-bg"></div>
+  <div class="hero-rings"><span></span><span></span><span></span></div>
+  <div class="hero-bubbles">
+    <i style="left:12%;animation-delay:0s;width:10px;height:10px"></i>
+    <i style="left:22%;animation-delay:1.4s;width:6px;height:6px"></i>
+    <i style="left:34%;animation-delay:.6s;width:14px;height:14px"></i>
+    <i style="left:48%;animation-delay:2.1s;width:8px;height:8px"></i>
+    <i style="left:63%;animation-delay:.3s;width:11px;height:11px"></i>
+    <i style="left:76%;animation-delay:1.8s;width:7px;height:7px"></i>
+    <i style="left:88%;animation-delay:1s;width:12px;height:12px"></i>
+  </div>
+  <div class="hero-content">
+    <div class="hero-flask">
+      <div class="hero-flask-liquid"></div>
+      <div class="hero-flask-shine"></div>
+    </div>
+    <h1 class="hero-title">TITRATION<span>LAB</span></h1>
+    <p class="hero-sub">ห้องปฏิบัติการไทเทรตกรด-เบสเสมือนจริง</p>
+    <button class="btn btn-main hero-btn" onclick="goInfo()">เข้าสู่ห้องปฏิบัติการ</button>
+  </div>
+</div>
+
+<div id="scr-info" class="screen">
+  <div class="brand"><div class="flask-ico"></div><h1>TITRATION LAB</h1></div>
+  <div class="card">
+
+  <h2>วัตถุประสงค์</h2>
+    <p>แบบฝึกหัดนี้มีจุดมุ่งหมายเพื่อฝึกทักษะการไทเทรตกรดและเบส ผู้เล่นต้องหาปริมาตรของสารมาตรฐานที่ทำให้เกิดจุดยุติได้อย่างแม่นยำที่สุด โดยอาศัยการสังเกตการเปลี่ยนสีของอินดิเคเตอร์เป็นหลักฐานเชิงประจักษ์ มิใช่การคาดเดา</p>
+  </div>
+  <div class="card">
+    <h2>วิธีเล่น</h2>
+    <ul>
+      <li>แต่ละด่านแสดงข้อมูลสารตั้งต้นสองฝั่ง ได้แก่ สารในฟลาสก์และสารมาตรฐานในบิวเรต</li>
+      <li>ผู้เล่นเลื่อนแถบควบคุมเพื่อหยดสารมาตรฐานลงในฟลาสก์ทีละน้อย โดยเลื่อนได้ในทิศทางเพิ่มขึ้นเท่านั้น ไม่สามารถลดปริมาตรที่หยดแล้วได้ เช่นเดียวกับการหยดสารจริงในห้องปฏิบัติการ</li>
+      <li>สีของสารในฟลาสก์จะเปลี่ยนโดยทันทีเมื่อถึงจุดเปลี่ยนสีของอินดิเคเตอร์ ระบบจะไม่แสดงการไล่สีหรือคำใบ้ใดเกี่ยวกับตำแหน่งของจุดยุติ</li>
+      <li>เมื่อพิจารณาว่าปริมาตรที่หยดแล้วใกล้เคียงจุดยุติที่สุด ให้กดปุ่มยืนยันปริมาตร คะแนนที่ได้จะขึ้นอยู่กับความแม่นยำเมื่อเทียบกับจุดสมมูลที่แท้จริง</li>
+      <li>เมื่อครบสิบด่าน ระบบจะสรุปคะแนนรวมทั้งหมดให้โดยอัตโนมัติ</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>คอนเซปต์</h2>
+    <p>อินดิเคเตอร์แต่ละชนิดเปลี่ยนสีที่ค่า pH ที่แตกต่างกัน และจุดเปลี่ยนสีนั้นบางครั้งไม่ตรงกับจุดสมมูลจริงเสียทีเดียว การเลือกอินดิเคเตอร์ให้เหมาะสมกับคู่กรดเบสจึงมีความสำคัญอย่างยิ่งต่อความแม่นยำของผล แบบฝึกหัดนี้ออกแบบมาเพื่อให้ผู้เล่นได้สัมผัสความคลาดเคลื่อนดังกล่าวด้วยตนเอง</p>
+  </div>
+  <div class="center"><button class="btn btn-main" onclick="startGame()">เริ่มเล่น</button></div>
+</div>
+
+<div id="scr-game" class="screen">
+  <div class="topbar">
+    <div class="pill" id="lvlPill">ด่าน 1/10</div>
+    <div class="pill" id="scorePill">คะแนนรวม 0</div>
+  </div>
+  <div class="info-row">
+    <div class="info-card acid" id="leftInfo"></div>
+    <div class="info-card base" id="rightInfo"></div>
+  </div>
+  <div class="labzone">
+    <div class="rig">
+      <div class="stand">
+        <div class="clamp"></div>
+        <div class="burette"><div class="liquid" id="buretteLiquid"></div></div>
+        <div class="stopcock"></div><div class="drip"></div>
+      </div>
+      <div class="flask-wrap">
+        <div class="neck-cap" style="margin:0 auto 62px auto;width:26px"></div>
+        <div class="flask"><div class="liquid" id="flaskLiquid"></div><div class="shine"></div></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="vol-readout">ปริมาตรที่หยดแล้ว: <b id="volNow">0.00</b> mL</div>
+      <input type="range" id="slider" min="0" max="10" step="0.05" value="0">
+      <p class="hint">ลากช้า ๆ แล้วสังเกตสีในฟลาสก์ — หยุดทันทีที่สีเปลี่ยน แล้วกดยืนยัน</p>
+    </div>
+  </div>
+  <div class="row-btns"><button class="btn btn-main" id="confirmBtn" onclick="confirmVolume()">ยืนยันปริมาตร</button></div>
+
+  <div class="card result-box" id="resultCard" style="display:none;">
+    <h2 id="resultTitle"></h2>
+    <div class="score-num" id="resultScore"></div>
+    <p id="resultDetail"></p>
+    <div class="row-btns"><button class="btn btn-main" onclick="nextLevel()" id="nextBtn">ด่านถัดไป</button></div>
+  </div>
+</div>
+
+<div id="scr-summary" class="screen">
+  <div class="brand"><div class="flask-ico"></div><h1>สรุปผลการทดลอง</h1></div>
+  <div class="card center">
+    <p>คะแนนรวมทั้งหมด</p>
+    <div class="score-num" id="totalScore"></div>
+  </div>
+  <div class="card"><ul class="summary-list" id="summaryList"></ul></div>
+  <div class="center"><button class="btn btn-ghost" onclick="location.reload()">เล่นใหม่อีกครั้ง</button></div>
+</div>
+
+<script>
+const levels=[
+{side:'acid',name:'กรดไฮโดรคลอริก',formula:'HCl',conc:0.10,vol:25,n:1,tName:'โซเดียมไฮดรอกไซด์',tFormula:'NaOH',tConc:0.10,tN:1,ind:'ฟีนอล์ฟทาลีน',c1:'#f4f1e7',c2:'#f0a3c2',err:0,note:'กรดแก่-เบสแก่ จุดสมมูลอยู่ที่ pH 7 ฟีนอล์ฟทาลีนเปลี่ยนสีตรงจุดสมมูลพอดี'},
+{side:'base',name:'โซเดียมไฮดรอกไซด์',formula:'NaOH',conc:0.10,vol:20,n:1,tName:'กรดไฮโดรคลอริก',tFormula:'HCl',tConc:0.10,tN:1,ind:'เมทิลออเรนจ์',c1:'#f4d968',c2:'#e2543f',err:0,note:'เบสแก่-กรดแก่ เมทิลออเรนจ์เหมาะกับช่วงกรด ให้ผลใกล้เคียงจุดสมมูล'},
+{side:'acid',name:'กรดแอซีติก (น้ำส้มสายชู)',formula:'CH3COOH',conc:0.10,vol:25,n:1,tName:'โซเดียมไฮดรอกไซด์',tFormula:'NaOH',tConc:0.10,tN:1,ind:'ฟีนอล์ฟทาลีน',c1:'#f4f1e7',c2:'#f0a3c2',err:0,note:'กรดอ่อน-เบสแก่ จุดสมมูลเป็นเบส (pH>7) ฟีนอล์ฟทาลีนจึงเหมาะสมมาก'},
+{side:'base',name:'แอมโมเนีย',formula:'NH3',conc:0.10,vol:25,n:1,tName:'กรดไฮโดรคลอริก',tFormula:'HCl',tConc:0.10,tN:1,ind:'เมทิลเรด',c1:'#f4d968',c2:'#d6402f',err:0,note:'เบสอ่อน-กรดแก่ จุดสมมูลเป็นกรด (pH<7) เมทิลเรดจึงเปลี่ยนสีตรงจุด'},
+{side:'acid',name:'กรดซัลฟิวริก',formula:'H2SO4',conc:0.05,vol:20,n:2,tName:'โซเดียมไฮดรอกไซด์',tFormula:'NaOH',tConc:0.10,tN:1,ind:'โบรโมไทมอลบลู',c1:'#f4e96a',c2:'#3f7fc4',err:0,note:'กรดแก่ 2 โปรตอน-เบสแก่ จุดสมมูลกลาง โบรโมไทมอลบลูเปลี่ยนสีได้แม่นยำ'},
+{side:'base',name:'แบเรียมไฮดรอกไซด์',formula:'Ba(OH)2',conc:0.05,vol:20,n:2,tName:'กรดไฮโดรคลอริก',tFormula:'HCl',tConc:0.10,tN:1,ind:'ฟีนอล์ฟทาลีน',c1:'#f0a3c2',c2:'#f4f1e7',err:0.05,note:'ฟีนอล์ฟทาลีนเปลี่ยนสีเร็วกว่าจุดสมมูลจริงเล็กน้อยในคู่นี้ ทำให้เกิดความคลาดเคลื่อนได้'},
+{side:'acid',name:'กรดฟอร์มิก',formula:'HCOOH',conc:0.10,vol:30,n:1,tName:'โพแทสเซียมไฮดรอกไซด์',tFormula:'KOH',tConc:0.10,tN:1,ind:'ฟีนอล์ฟทาลีน',c1:'#f4f1e7',c2:'#f0a3c2',err:0,note:'กรดอ่อน-เบสแก่ จุดสมมูลเป็นเบส เข้ากับฟีนอล์ฟทาลีนพอดี'},
+{side:'acid',name:'กรดไนตริก',formula:'HNO3',conc:0.10,vol:25,n:1,tName:'โพแทสเซียมไฮดรอกไซด์',tFormula:'KOH',tConc:0.10,tN:1,ind:'ลิตมัส',c1:'#e2543f',c2:'#3f7fc4',err:0.08,note:'ลิตมัสมีช่วงเปลี่ยนสีกว้างและไม่คมชัด จึงคลาดเคลื่อนจากจุดสมมูลได้มาก'},
+{side:'acid',name:'กรดออกซาลิก',formula:'H2C2O4',conc:0.05,vol:20,n:2,tName:'โซเดียมไฮดรอกไซด์',tFormula:'NaOH',tConc:0.10,tN:1,ind:'ฟีนอล์ฟทาลีน',c1:'#f4f1e7',c2:'#f0a3c2',err:0,note:'กรดอ่อน 2 โปรตอน-เบสแก่ จุดสมมูลสุดท้ายเป็นเบส เข้ากับฟีนอล์ฟทาลีน'},
+{side:'base',name:'แคลเซียมไฮดรอกไซด์',formula:'Ca(OH)2',conc:0.04,vol:15,n:2,tName:'กรดไฮโดรคลอริก (เข้มข้น)',tFormula:'HCl',tConc:0.20,tN:1,ind:'เมทิลออเรนจ์',c1:'#f4d968',c2:'#e2543f',err:0.10,note:'ปริมาตรจุดสมมูลน้อยและสารเข้มข้น ต้องหยดอย่างละเอียด อีกทั้งเมทิลออเรนจ์คลาดเคลื่อนจากจุดสมมูลได้พอสมควร'}
+];
+
+levels.forEach(l=>{ l.oConc=l.conc; l.oVol=l.vol; l.oTConc=l.tConc; });
+function randomizeLevel(l){
+  l.conc = +(l.oConc*(0.7+Math.random()*0.6)).toFixed(l.oConc<0.1?3:2);
+  l.vol = Math.round(l.oVol*(0.7+Math.random()*0.6)/0.5)*0.5;
+  l.tConc = +(l.oTConc*(0.7+Math.random()*0.6)).toFixed(l.oTConc<0.1?3:2);
+}
+
+let cur=0, total=0, maxReached=0, confirmed=false, results=[];
+const $=id=>document.getElementById(id);
+
+function eqVol(l){ return (l.n*l.conc*l.vol)/(l.tN*l.tConc); }
+function indVol(l){ return eqVol(l)*(1+l.err); }
+
+function goInfo(){
+  $('scr-title').classList.remove('active');
+  $('scr-info').classList.add('active');
+}
+
+function startGame(){
+  $('scr-info').classList.remove('active');
+  $('scr-game').classList.add('active');
+  loadLevel();
+}
+
+function loadLevel(){
+  const l=levels[cur];
+  randomizeLevel(l);
+  const eq=eqVol(l);
+  maxReached=0; confirmed=false;
+  $('lvlPill').textContent=`ด่าน ${cur+1}/10`;
+  $('scorePill').textContent=`คะแนนรวม ${total}`;
+  const flaskInfo = `<div class="tag ${l.side}">${l.side==='acid'?'สารในฟลาสก์ (กรด)':'สารในฟลาสก์ (เบส)'}</div><b>${l.name} (${l.formula})</b><span>ความเข้มข้น ${l.conc} M · ปริมาตร ${l.vol} mL</span>`;
+  const tInfo = `<div class="tag ${l.side==='acid'?'base':'acid'}">ไทแทรนต์ในบิวเรต</div><b>${l.tName} (${l.tFormula})</b><span>ความเข้มข้น ${l.tConc} M</span>`;
+  $('leftInfo').innerHTML=flaskInfo;
+  $('rightInfo').innerHTML=tInfo;
+  $('leftInfo').className='info-card '+l.side;
+  $('rightInfo').className='info-card '+(l.side==='acid'?'base':'acid');
+
+  const max=(eq*1.8);
+  const slider=$('slider');
+  slider.min=0; slider.max=max.toFixed(2); slider.step=Math.max(0.02,+(eq/250).toFixed(2)); slider.value=0;
+  $('volNow').textContent='0.00';
+  $('flaskLiquid').style.background=l.c1;
+  $('buretteLiquid').style.height='100%';
+  $('buretteLiquid').style.background = l.side==='acid'?'#2f6fae':'#c65b4e';
+  $('resultCard').style.display='none';
+  $('confirmBtn').style.display='inline-block';
+  $('confirmBtn').disabled=false;
+
+  slider.oninput=()=>{
+    let v=parseFloat(slider.value);
+    if(v<maxReached){ slider.value=maxReached; v=maxReached; }
+    else{ maxReached=v; }
+    $('volNow').textContent=v.toFixed(2);
+    const iv=indVol(l);
+    $('flaskLiquid').style.background = v>=iv ? l.c2 : l.c1;
+    const pct=Math.max(6,100-(v/max*100));
+    $('buretteLiquid').style.height=pct+'%';
+  };
+}
+
+function confirmVolume(){
+  if(confirmed) return;
+  confirmed=true;
+  const l=levels[cur];
+  const eq=eqVol(l);
+  const chosen=parseFloat($('slider').value);
+  const errPct=Math.abs(chosen-eq)/eq;
+  let score=Math.round(Math.max(0,100*(1-errPct/0.05)));
+  total+=score;
+  results.push({name:`${l.name} + ${l.tFormula}`,score,eq,chosen});
+  $('confirmBtn').style.display='none';
+  $('resultCard').style.display='block';
+  $('resultTitle').textContent = score>=90?'แม่นยำมาก!':score>=60?'ใกล้เคียงดี':score>0?'ยังคลาดเคลื่อนอยู่':'ห่างจากจุดยุติมาก';
+  $('resultScore').textContent=score+' คะแนน';
+  $('resultDetail').innerHTML=`คุณหยุดที่ <b>${chosen.toFixed(2)} mL</b> ส่วนจุดสมมูลจริงคือ <b>${eq.toFixed(2)} mL</b><br><span style="font-size:13px">${l.note}</span>`;
+  $('scorePill').textContent=`คะแนนรวม ${total}`;
+  $('nextBtn').textContent = cur<levels.length-1 ? 'ด่านถัดไป' : 'ดูสรุปผล';
+}
+
+function nextLevel(){
+  cur++;
+  if(cur>=levels.length){ showSummary(); return; }
+  loadLevel();
+}
+
+function showSummary(){
+  $('scr-game').classList.remove('active');
+  $('scr-summary').classList.add('active');
+  $('totalScore').textContent=total+' / 1000';
+  $('summaryList').innerHTML=results.map((r,i)=>`<li>ด่าน ${i+1}: ${r.name}<b>${r.score} คะแนน</b></li>`).join('');
+}
+</script>
+</body>
+</html>
